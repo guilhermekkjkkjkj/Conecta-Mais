@@ -1,1 +1,521 @@
 # Conecta-Mais
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Conecta+</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap">
+<style>
+/* Layout: app de uma página com cabeçalho fixo e cinco telas (início, oportunidades, Estônia × Brasil, sobre, votação).
+   Paleta: azul-marinho, azul, turquesa e verde do logotipo. Tipos: Poppins nos títulos, Inter no texto. */
+:root{
+  --bg:#F4F7FF; --surface:#FFFFFF; --surface2:#EAF0FF; --ink:#0B1B4D; --ink2:#3C4A6B; --line:#D8E0F5;
+  --accent:#2547D0; --btn:#2547D0; --btn-ink:#FFFFFF; --navy:#0B1B4D; --navy-ink:#FFFFFF; --navy-ink2:#C9D6FF;
+  --ok-bg:#E3F5EC; --ok-ink:#14664A; --focus:#2547D0;
+  --l1:#2E9B4A; --l2:#3DB45B; --l3:#2B9BD9; --l4:#35A8E6; --l5:#2B9BD9; --a1:#0E6B73; --a2:#2B9BD9;
+  --f-head:'Poppins',Arial,sans-serif; --f-body:'Inter',Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A1230; --surface:#111C45; --surface2:#17265C; --ink:#EAF0FF; --ink2:#B8C6EE; --line:#26346B;
+  --accent:#8EA8FF; --ok-bg:#12372B; --ok-ink:#7BE8B3; --focus:#8EA8FF;
+  --l1:#4BD37B; --l2:#6BE08F; --l3:#5BB8FF; --l4:#7CC8FF; --l5:#5BB8FF; --a1:#35D0C0; --a2:#5BB8FF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A1230; --surface:#111C45; --surface2:#17265C; --ink:#EAF0FF; --ink2:#B8C6EE; --line:#26346B;
+  --accent:#8EA8FF; --ok-bg:#12372B; --ok-ink:#7BE8B3; --focus:#8EA8FF;
+  --l1:#4BD37B; --l2:#6BE08F; --l3:#5BB8FF; --l4:#7CC8FF; --l5:#5BB8FF; --a1:#35D0C0; --a2:#5BB8FF; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+h1,h2,h3{font-family:var(--f-head);line-height:1.12;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(2.1rem,5.2vw,3.5rem);font-weight:700}
+h2{font-size:clamp(1.6rem,3.4vw,2.3rem);font-weight:600}
+h3{font-size:1.18rem;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1120px;margin:0 auto}
+.eyebrow{font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.lead{font-size:1.15rem;color:var(--ink2);max-width:62ch}
+.logo{display:block;flex:none}
+
+/* cabeçalho */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);
+  margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:6px 24px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--f-head);font-weight:700;font-size:1.45rem}
+nav{min-width:0;flex:1 1 340px;overflow-x:auto}
+nav ul{display:flex;gap:4px;list-style:none;margin:0;padding:0;white-space:nowrap}
+nav a{display:block;padding:9px 14px;border-radius:999px;text-decoration:none;color:var(--ink2);font-weight:500;font-size:.98rem;min-height:44px;line-height:26px}
+nav a:hover{background:var(--surface2);color:var(--ink)}
+nav a[aria-current="page"]{background:var(--btn);color:var(--btn-ink)}
+
+main{padding-block:40px 64px}
+.view[hidden]{display:none}
+.view{display:flex;flex-direction:column;gap:56px}
+
+/* botões e campos */
+.btn{appearance:none;border:0;background:var(--btn);color:var(--btn-ink);font:600 1rem var(--f-body);padding:12px 22px;border-radius:12px;cursor:pointer;min-height:48px;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{background:var(--surface2);filter:none}
+input[type=search],select{font:400 1rem var(--f-body);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;min-height:48px;width:100%;min-width:0}
+label{font-size:.85rem;font-weight:600;color:var(--ink2)}
+
+/* início */
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:40px;align-items:center}
+.hero-text{display:flex;flex-direction:column;gap:20px}
+.search{display:flex;flex-wrap:wrap;gap:10px;max-width:560px}
+.search input{flex:1 1 240px}
+.panel{background:var(--navy);color:var(--navy-ink);border-radius:28px;padding:36px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+.panel .word{font-family:var(--f-head);font-weight:700;font-size:2.4rem;line-height:1}
+.panel p{color:var(--navy-ink2);font-size:1rem}
+.panel .logo{--l1:#4BD37B;--l2:#6BE08F;--l3:#5BB8FF;--l4:#7CC8FF;--l5:#5BB8FF;--a1:#35D0C0;--a2:#5BB8FF}
+.sec-head{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:20px;list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:8px}
+.steps li::before{content:counter(s);width:36px;height:36px;border-radius:50%;background:var(--surface2);color:var(--accent);display:grid;place-items:center;font:600 1rem var(--f-head)}
+.steps p{color:var(--ink2)}
+.areas{display:flex;flex-wrap:wrap;gap:10px}
+.chip{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:500 .95rem var(--f-body);padding:8px 16px;border-radius:999px;cursor:pointer;min-height:44px}
+.chip:hover{background:var(--surface2)}
+.chip[aria-pressed="true"]{background:var(--btn);border-color:var(--btn);color:var(--btn-ink)}
+
+/* oportunidades */
+.notice{background:var(--surface2);border-radius:14px;padding:12px 16px;color:var(--ink2);font-size:.95rem}
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:18px}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.checks{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.checks label{display:inline-flex;align-items:center;gap:8px;font-size:.95rem;font-weight:500;color:var(--ink);min-height:44px}
+.checks input{width:20px;height:20px;accent-color:var(--btn)}
+.count{color:var(--ink2);font-size:.95rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:20px}
+.opp{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.opp-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tag{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--ok-bg);color:var(--ok-ink)}
+.meta{color:var(--ink2);font-size:.95rem}
+.desc{font-size:.98rem}
+.tags{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.tags li{font-size:.85rem;background:var(--surface2);padding:3px 11px;border-radius:999px;color:var(--ink2)}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:600;color:var(--accent);min-height:32px}
+details p{margin-top:8px;color:var(--ink2);font-size:.95rem}
+.save{margin-top:auto;align-self:flex-start;appearance:none;background:transparent;border:1.5px solid var(--line);color:var(--ink);font:600 .92rem var(--f-body);padding:8px 14px;border-radius:10px;cursor:pointer;min-height:44px;display:inline-flex;gap:8px;align-items:center}
+.save[aria-pressed="true"]{background:var(--surface2);border-color:var(--accent);color:var(--accent)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:20px;padding:36px;text-align:center;color:var(--ink2)}
+
+/* Estônia × Brasil */
+.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:20px;list-style:none;margin:0;padding:0}
+.timeline li{border-top:4px solid var(--accent);padding-top:14px;display:flex;flex-direction:column;gap:4px}
+.timeline b{font:700 1.8rem var(--f-head)}
+.versus{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:24px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card ul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:6px}
+.card .sub{color:var(--ink2)}
+.statement{background:var(--btn);color:#fff;border-radius:24px;padding:clamp(24px,5vw,48px);display:flex;flex-direction:column;gap:12px}
+.statement h2{color:#fff}
+.statement p{color:#DCE6FF;font-size:1.1rem}
+.trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:20px}
+
+/* sobre */
+.table-box{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:20px}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+tr:last-child td{border-bottom:0}
+
+.qr{background:#fff;padding:14px;border-radius:16px;width:fit-content;max-width:100%;line-height:0}
+/* votação */
+.vote-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px;align-items:start}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opt{appearance:none;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:16px 18px;cursor:pointer;color:var(--ink);font:inherit;display:flex;flex-direction:column;gap:2px;min-height:64px}
+.opt:hover{border-color:var(--accent)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--surface2)}
+.opt b{font:600 1.1rem var(--f-head)}
+.opt span{color:var(--ink2);font-size:.92rem}
+.bars{display:flex;flex-direction:column;gap:16px}
+.bar-row{display:flex;flex-direction:column;gap:6px}
+.bar-top{display:flex;justify-content:space-between;gap:8px;font-weight:600}
+.bar{height:14px;border-radius:999px;background:var(--surface2);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--a1),var(--a2));border-radius:999px;transition:width .4s}
+.status{min-height:1.5em;color:var(--ink2);font-size:.95rem}
+
+footer{border-top:1px solid var(--line);padding-block:28px 40px;display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between;color:var(--ink2);font-size:.95rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between;width:100%}
+.fbrand{display:flex;align-items:center;gap:10px;color:var(--ink);font:700 1.1rem var(--f-head)}
+@media (max-width:760px){
+  .hero{grid-template-columns:minmax(0,1fr)}
+  body{font-size:16px}
+  main{padding-block:28px 48px}
+  .view{gap:44px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bar i{transition:none}}
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="arch" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--a1)"/><stop offset="1" stop-color="var(--a2)"/></linearGradient>
+    <symbol id="mark" viewBox="0 0 120 100">
+      <circle cx="22" cy="42" r="7" style="fill:var(--l1)"/>
+      <circle cx="40" cy="28" r="9" style="fill:var(--l2)"/>
+      <circle cx="60" cy="20" r="11" style="fill:var(--l3)"/>
+      <circle cx="80" cy="28" r="9" style="fill:var(--l4)"/>
+      <circle cx="98" cy="42" r="7" style="fill:var(--l5)"/>
+      <path d="M40 92V66A20 20 0 0 1 80 66V92" fill="none" stroke="url(#arch)" stroke-width="12"/>
+      <path d="M12 90V70A14 14 0 0 1 28 56" fill="none" style="stroke:var(--l2)" stroke-width="9" stroke-linecap="round"/>
+      <path d="M108 90V70A14 14 0 0 0 92 56" fill="none" style="stroke:var(--l4)" stroke-width="9" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="Conecta+, página inicial">
+      <svg class="logo" width="50" height="42" viewBox="0 0 120 100" role="img" aria-label="Logotipo Conecta+: cinco pessoas em volta de um arco"><use href="#mark"/></svg>
+      <span>Conecta+</span>
+    </a>
+    <nav aria-label="Principal">
+      <ul>
+        <li><a href="#inicio" data-nav="inicio">Início</a></li>
+        <li><a href="#oportunidades" data-nav="oportunidades">Oportunidades</a></li>
+        <li><a href="#estonia-brasil" data-nav="estonia-brasil">Estônia × Brasil</a></li>
+        <li><a href="#sobre" data-nav="sobre">Sobre</a></li>
+        <li><a href="#votar" data-nav="votar">Vote aqui</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- INÍCIO -->
+<section class="view" id="v-inicio" data-view="inicio" aria-labelledby="h-inicio">
+  <div class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">Estônia × Brasil · Do recomeço à inovação</p>
+      <h1 id="h-inicio">Tecnologia para aproximar pessoas e oportunidades</h1>
+      <p class="lead">Cursos, bolsas, estágios e eventos verificados, reunidos em um só lugar e filtrados por área e localização.</p>
+      <form class="search" id="home-search" role="search">
+        <label for="home-q" class="sr" style="position:absolute;left:-9999px">Buscar oportunidades</label>
+        <input id="home-q" type="search" placeholder="Ex.: programação, enfermagem, estágio" autocomplete="off">
+        <button class="btn" type="submit">Buscar</button>
+      </form>
+    </div>
+    <div class="panel">
+      <svg class="logo" width="220" height="183" viewBox="0 0 120 100" role="img" aria-label="Logotipo Conecta+"><use href="#mark"/></svg>
+      <div class="word">Conecta+</div>
+      <p>Juntos por um futuro mais digital!</p>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec-head"><p class="eyebrow">Como funciona</p><h2>Do problema à oportunidade em três passos</h2></div>
+    <ol class="steps">
+      <li><h3>Busque</h3><p>Digite o que você quer aprender ou fazer e veja só o que foi conferido.</p></li>
+      <li><h3>Filtre</h3><p>Escolha a área, o tipo de oportunidade e a localização que cabem na sua vida.</p></li>
+      <li><h3>Salve e participe</h3><p>Guarde as favoritas e veja como participar de cada uma.</p></li>
+    </ol>
+  </div>
+
+  <div>
+    <div class="sec-head"><p class="eyebrow">Explore por área</p><h2>O que você quer encontrar?</h2></div>
+    <div class="areas" id="home-areas"></div>
+  </div>
+
+  <div>
+    <div class="sec-head"><p class="eyebrow">Em destaque</p><h2>Oportunidades de exemplo</h2><p class="lead">Estas oportunidades foram criadas para a apresentação e mostram como o catálogo funciona.</p></div>
+    <div class="grid" id="featured"></div>
+  </div>
+
+  <div class="card" style="align-items:flex-start">
+    <p class="eyebrow">Abra no celular</p>
+    <h2>Conheça a Conecta+</h2>
+    <p style="color:var(--ink2)">Aponte a câmera para o QR code e abra o site.</p>
+    <div class="qr" data-qr></div>
+  </div>
+</section>
+
+<!-- OPORTUNIDADES -->
+<section class="view" id="v-oportunidades" data-view="oportunidades" aria-labelledby="h-op" hidden>
+  <div class="sec-head" style="margin:0">
+    <p class="eyebrow">Catálogo</p>
+    <h2 id="h-op">Oportunidades verificadas</h2>
+    <p class="notice">Catálogo de demonstração: as oportunidades abaixo são exemplos criados para a apresentação da startup.</p>
+  </div>
+  <div class="filters">
+    <div class="field"><label for="f-q">Buscar</label><input id="f-q" type="search" placeholder="Título, instituição ou assunto" autocomplete="off"></div>
+    <div class="field"><span class="label" style="font-size:.85rem;font-weight:600;color:var(--ink2)" id="f-area-l">Área</span><div class="areas" id="f-areas" role="group" aria-labelledby="f-area-l"></div></div>
+    <div class="frow">
+      <div class="field"><label for="f-tipo">Tipo</label><select id="f-tipo"></select></div>
+      <div class="field"><label for="f-loc">Localização</label><select id="f-loc"></select></div>
+    </div>
+    <div class="checks">
+      <label><input id="f-gratis" type="checkbox"> Só gratuitas</label>
+      <label><input id="f-salvas" type="checkbox"> Só salvas <span id="f-salvas-n"></span></label>
+      <button class="btn ghost" type="button" id="f-limpar">Limpar filtros</button>
+    </div>
+  </div>
+  <p class="count" id="count" aria-live="polite"></p>
+  <div class="grid" id="list"></div>
+</section>
+
+<!-- ESTÔNIA × BRASIL -->
+<section class="view" id="v-estonia-brasil" data-view="estonia-brasil" aria-labelledby="h-eb" hidden>
+  <div class="sec-head" style="margin:0">
+    <p class="eyebrow">Estônia × Brasil</p>
+    <h2 id="h-eb">A Estônia se reinventou. E o Brasil?</h2>
+    <p class="lead">Somos uma potência tecnológica ou ainda temos muito a aprender?</p>
+  </div>
+  <ol class="timeline" aria-label="Linha do tempo da Estônia">
+    <li><b>1991</b><span>Recuperação da independência</span></li>
+    <li><b>1996</b><span>Tiger Leap: educação tecnológica</span></li>
+    <li><b>Hoje</b><span>Sociedade digital</span></li>
+  </ol>
+  <div class="versus">
+    <article class="card">
+      <h3>Estônia</h3>
+      <p class="sub">Um país que apostou no futuro</p>
+      <ul><li>Governo digital e serviços online</li><li>Educação tecnológica</li><li>Startups e inovação</li><li>Segurança da informação</li></ul>
+    </article>
+    <article class="card">
+      <h3>Brasil</h3>
+      <p class="sub">Criatividade e grandes desafios</p>
+      <ul><li>Pix e fintechs</li><li>Agropecuária de precisão</li><li>Educação digital</li><li>Startups e sustentabilidade</li><li>Desigualdade de acesso à internet</li><li>Segurança digital</li></ul>
+    </article>
+  </div>
+  <div class="statement">
+    <h2>A tecnologia resolve problemas. A inovação transforma realidades.</h2>
+    <p>Pequenas ideias podem gerar grandes mudanças. A Conecta+ nasce dessa ideia.</p>
+  </div>
+  <div class="trio">
+    <article class="card"><h3>Inovação já existe</h3><p class="sub">O Brasil já tem exemplos reconhecidos de tecnologia que mudou o dia a dia.</p></article>
+    <article class="card"><h3>Precisamos distribuir</h3><p class="sub">Ainda há desigualdade de acesso à internet e às oportunidades.</p></article>
+    <article class="card"><h3>É possível ir mais longe</h3><p class="sub">Plataformas simples ajudam mais gente a chegar ao que já existe.</p></article>
+  </div>
+  <div class="card">
+    <h3>Fontes confiáveis</h3>
+    <ul>
+      <li><a href="https://e-estonia.com" target="_blank" rel="noopener">e-Estonia</a>: história da transformação digital da Estônia</li>
+      <li><a href="https://startupestonia.ee" target="_blank" rel="noopener">Startup Estonia</a>: ecossistema de startups</li>
+      <li><a href="https://www.bcb.gov.br" target="_blank" rel="noopener">Banco Central do Brasil</a>: sobre o Pix</li>
+    </ul>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section class="view" id="v-sobre" data-view="sobre" aria-labelledby="h-sobre" hidden>
+  <div class="sec-head" style="margin:0">
+    <p class="eyebrow">Sobre a startup</p>
+    <h2 id="h-sobre">A ideia da Conecta+</h2>
+    <p class="lead">Uma plataforma que reúne cursos, bolsas e oportunidades de formação e aproxima quem procura de quem oferece.</p>
+  </div>
+  <div class="versus">
+    <article class="card"><p class="eyebrow">O problema</p><h3>Encontrar oportunidades confiáveis é difícil</h3><p class="sub">Muitos estudantes não sabem onde procurar, e quem procura se perde entre fontes soltas.</p></article>
+    <article class="card"><p class="eyebrow">A solução</p><h3>Plataforma com oportunidades verificadas</h3><p class="sub">Filtros por área e localização ajudam cada pessoa a achar o que combina com ela.</p></article>
+  </div>
+  <div class="versus">
+    <article class="card"><h3>Quem se beneficia</h3><ul><li>Estudantes</li><li>Famílias</li><li>Escolas</li></ul></article>
+    <article class="card"><h3>Como se sustenta</h3><ul><li>Parcerias com quem oferece oportunidades</li><li>Acesso gratuito para os estudantes</li></ul></article>
+  </div>
+  <div>
+    <div class="sec-head"><p class="eyebrow">Riscos</p><h2>O que pode dar errado e como reduzir</h2></div>
+    <div class="table-box">
+      <table>
+        <thead><tr><th scope="col">Risco</th><th scope="col">Como reduzir (proposta)</th></tr></thead>
+        <tbody>
+          <tr><td>Dados dos usuários</td><td>Coletar só o necessário e explicar o uso</td></tr>
+          <tr><td>Informações desatualizadas</td><td>Revisar as oportunidades e remover as vencidas</td></tr>
+          <tr><td>Acessibilidade</td><td>Versão simples, leve e fácil de usar no celular</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- VOTAÇÃO -->
+<section class="view" id="v-votar" data-view="votar" aria-labelledby="h-votar" hidden>
+  <div class="sec-head" style="margin:0">
+    <p class="eyebrow">Desafio da inovação</p>
+    <h2 id="h-votar">Vote aqui! Qual solução você escolheria?</h2>
+    <p class="lead">Qual problema da comunidade deveria ser resolvido primeiro? Escolha uma opção abaixo.</p>
+  </div>
+  <div class="vote-grid">
+    <div class="opts" id="opts" role="group" aria-label="Opções de voto"></div>
+    <div class="card">
+      <h3>Seu voto</h3>
+      <p id="mine" style="color:var(--ink2)">Você ainda não votou.</p>
+      <p class="status" id="vstatus" aria-live="polite"></p>
+      <h3 style="margin-top:8px">Conheça a Conecta+</h3>
+      <p style="color:var(--ink2)">Aponte a câmera do celular para abrir o site.</p>
+      <div class="qr" data-qr></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fbrand">
+      <svg class="logo" width="38" height="32" viewBox="0 0 120 100" aria-hidden="true"><use href="#mark"/></svg>
+      <span>Conecta+</span>
+    </div>
+    <p>Projeto escolar. As oportunidades são exemplos criados para a apresentação.</p>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <button class="btn ghost" type="button" id="copy">Copiar link</button>
+      <span class="status" id="copystatus" aria-live="polite"></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var norm=function(s){return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')};
+
+/* ---------- dados de exemplo ---------- */
+var AREAS=['Tecnologia','Educação','Saúde','Segurança digital','Meio ambiente','Negócios'];
+var TIPOS=['Curso','Bolsa','Estágio','Evento','Mentoria'];
+var OPPS=[
+ {id:'o1',titulo:'Introdução à programação',tipo:'Curso',area:'Tecnologia',parceiro:'Escola de tecnologia parceira',online:true,nivel:'Ensino médio',gratis:true,desc:'Primeiros passos em lógica e programação, com exercícios práticos e tutoria.',como:'Inscrição pelo site do parceiro. Basta ter acesso a um computador ou celular.'},
+ {id:'o2',titulo:'Bolsa de iniciação científica júnior',tipo:'Bolsa',area:'Educação',parceiro:'Universidade parceira',cidade:'Vitória',uf:'ES',nivel:'Ensino médio',gratis:true,desc:'Bolsa para estudantes que querem participar de projetos de pesquisa em laboratório.',como:'Enviar histórico escolar e carta de interesse à coordenação do projeto.'},
+ {id:'o3',titulo:'Estágio em atendimento digital',tipo:'Estágio',area:'Negócios',parceiro:'Empresa de serviços parceira',cidade:'Serra',uf:'ES',nivel:'Ensino técnico',gratis:true,desc:'Atendimento a clientes por chat e telefone, com treinamento no início do estágio.',como:'Candidatura com currículo simples e entrevista com a equipe de pessoas.'},
+ {id:'o4',titulo:'Oficina: como reconhecer golpes online',tipo:'Evento',area:'Segurança digital',parceiro:'Associação de segurança da informação',online:true,nivel:'Todos',gratis:true,desc:'Aprenda a identificar sinais de alerta em mensagens falsas e a proteger seus dados.',como:'Reserve a vaga pela plataforma. A oficina acontece ao vivo, com perguntas ao final.'},
+ {id:'o5',titulo:'Curso de agentes ambientais',tipo:'Curso',area:'Meio ambiente',parceiro:'Instituto ambiental parceiro',cidade:'Vila Velha',uf:'ES',nivel:'Todos',gratis:true,desc:'Formação em educação ambiental, coleta seletiva e projetos para o bairro.',como:'Inscrição presencial no instituto ou pelo formulário do parceiro.'},
+ {id:'o6',titulo:'Mentoria para a primeira startup',tipo:'Mentoria',area:'Negócios',parceiro:'Rede de mentores voluntários',online:true,nivel:'Graduação',gratis:true,desc:'Encontros com mentores para validar uma ideia, definir o público e montar um pitch.',como:'Envie um resumo da ideia em até dez linhas. Os mentores respondem por e-mail.'},
+ {id:'o7',titulo:'Bolsa para curso técnico em enfermagem',tipo:'Bolsa',area:'Saúde',parceiro:'Escola técnica parceira',cidade:'Vitória',uf:'ES',nivel:'Ensino técnico',gratis:true,desc:'Bolsa parcial para quem concluiu o ensino médio e quer atuar na área da saúde.',como:'Prova de seleção simples e análise de renda familiar pela escola.'},
+ {id:'o8',titulo:'Feira de profissões para estudantes',tipo:'Evento',area:'Educação',parceiro:'Rede de escolas parceira',cidade:'São Paulo',uf:'SP',nivel:'Ensino médio',gratis:true,desc:'Conversas com profissionais de várias áreas e visitas a estandes de cursos.',como:'Entrada com inscrição prévia. Escolas podem levar turmas.'},
+ {id:'o9',titulo:'Planilhas e análise de dados',tipo:'Curso',area:'Tecnologia',parceiro:'Centro de formação parceiro',cidade:'Belo Horizonte',uf:'MG',nivel:'Todos',gratis:false,desc:'Do básico às tabelas dinâmicas, com projetos para o trabalho e para a escola.',como:'Matrícula pelo centro de formação. Há desconto para estudantes.'},
+ {id:'o10',titulo:'Jovem aprendiz em logística',tipo:'Estágio',area:'Negócios',parceiro:'Empresa de transporte parceira',cidade:'Cariacica',uf:'ES',nivel:'Ensino médio',gratis:true,desc:'Programa de aprendizagem com rotina de estudo e prática em operações de armazém.',como:'Candidatura com documentos pessoais e participação em dinâmica de grupo.'}
+];
+var UFS=['ES','MG','SP'];
+var OPTS=[
+ {id:'educacao',nome:'Educação',desc:'Mais acesso a cursos, escolas e aprendizado'},
+ {id:'saude',nome:'Saúde',desc:'Informação e atendimento mais perto de todos'},
+ {id:'seguranca',nome:'Segurança',desc:'Proteção contra golpes e riscos no dia a dia'},
+ {id:'ambiente',nome:'Meio ambiente',desc:'Cuidado com o bairro, a cidade e os recursos naturais'}
+];
+
+/* ---------- salvos (convenience por visitante) ---------- */
+var saved=new Set();
+try{saved=new Set(JSON.parse(localStorage.getItem('conecta-salvas')||'[]'))}catch(e){}
+function persist(){try{localStorage.setItem('conecta-salvas',JSON.stringify(Array.from(saved)))}catch(e){}}
+
+/* ---------- filtros ---------- */
+var f={q:'',area:'Todas',tipo:'Todos',loc:'Todas',gratis:false,salvas:false};
+function localDe(o){return o.online?'Online':o.cidade+', '+o.uf}
+function match(o){
+  if(f.area!=='Todas'&&o.area!==f.area)return false;
+  if(f.tipo!=='Todos'&&o.tipo!==f.tipo)return false;
+  if(f.loc==='Online'){if(!o.online)return false}else if(f.loc!=='Todas'&&o.uf!==f.loc)return false;
+  if(f.gratis&&!o.gratis)return false;
+  if(f.salvas&&!saved.has(o.id))return false;
+  if(f.q){var t=norm([o.titulo,o.parceiro,o.area,o.tipo,o.desc,localDe(o)].join(' '));
+    if(!norm(f.q).split(/\s+/).filter(Boolean).every(function(w){return t.indexOf(w)>-1}))return false}
+  return true;
+}
+var CHECK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+var STAR='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>';
+function card(o){
+  var s=saved.has(o.id);
+  return '<article class="opp"><div class="opp-top"><span class="tag">'+esc(o.tipo)+'</span><span class="badge">'+CHECK+'Verificada</span></div>'+
+  '<h3>'+esc(o.titulo)+'</h3><p class="meta">'+esc(o.parceiro)+' · '+esc(localDe(o))+'</p><p class="desc">'+esc(o.desc)+'</p>'+
+  '<ul class="tags"><li>'+esc(o.area)+'</li><li>'+esc(o.nivel)+'</li><li>'+(o.gratis?'Gratuita':'Com custo')+'</li></ul>'+
+  '<details><summary>Como participar</summary><p>'+esc(o.como)+'</p></details>'+
+  '<button class="save" type="button" data-save="'+o.id+'" aria-pressed="'+s+'">'+STAR+(s?'Salva':'Salvar')+'</button></article>';
+}
+function renderList(){
+  var r=OPPS.filter(match);
+  $('#list').innerHTML=r.length?r.map(card).join(''):'<div class="empty" style="grid-column:1/-1">Nenhuma oportunidade com esses filtros. Tente limpar alguns deles.</div>';
+  $('#count').textContent=r.length+(r.length===1?' oportunidade encontrada':' oportunidades encontradas');
+  $('#f-salvas-n').textContent='('+saved.size+')';
+  $('#featured').innerHTML=OPPS.slice(0,3).map(card).join('');
+}
+function renderAreaChips(){
+  var all=['Todas'].concat(AREAS);
+  $('#f-areas').innerHTML=all.map(function(a){return '<button type="button" class="chip" data-area="'+esc(a)+'" aria-pressed="'+(f.area===a)+'">'+esc(a)+'</button>'}).join('');
+}
+function syncControls(){
+  $('#f-q').value=f.q;$('#f-tipo').value=f.tipo;$('#f-loc').value=f.loc;
+  $('#f-gratis').checked=f.gratis;$('#f-salvas').checked=f.salvas;renderAreaChips();
+}
+function setupFilters(){
+  $('#f-tipo').innerHTML=['Todos'].concat(TIPOS).map(function(t){return '<option>'+esc(t)+'</option>'}).join('');
+  $('#f-loc').innerHTML=['Todas','Online'].concat(UFS).map(function(l){return '<option value="'+l+'">'+(UFS.indexOf(l)>-1?'Estado: '+l:l)+'</option>'}).join('');
+  $('#home-areas').innerHTML=AREAS.map(function(a){return '<button type="button" class="chip" data-go-area="'+esc(a)+'">'+esc(a)+'</button>'}).join('');
+  $('#f-q').addEventListener('input',function(e){f.q=e.target.value;renderList()});
+  $('#f-tipo').addEventListener('change',function(e){f.tipo=e.target.value;renderList()});
+  $('#f-loc').addEventListener('change',function(e){f.loc=e.target.value;renderList()});
+  $('#f-gratis').addEventListener('change',function(e){f.gratis=e.target.checked;renderList()});
+  $('#f-salvas').addEventListener('change',function(e){f.salvas=e.target.checked;renderList()});
+  $('#f-limpar').addEventListener('click',function(){f={q:'',area:'Todas',tipo:'Todos',loc:'Todas',gratis:false,salvas:false};syncControls();renderList()});
+  $('#f-areas').addEventListener('click',function(e){var b=e.target.closest('[data-area]');if(!b)return;f.area=b.getAttribute('data-area');renderAreaChips();renderList()});
+  $('#home-areas').addEventListener('click',function(e){var b=e.target.closest('[data-go-area]');if(!b)return;f.area=b.getAttribute('data-go-area');syncControls();renderList();location.hash='oportunidades'});
+  $('#home-search').addEventListener('submit',function(e){e.preventDefault();f.q=$('#home-q').value.trim();syncControls();renderList();location.hash='oportunidades'});
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-save]');if(!b)return;
+    var id=b.getAttribute('data-save');if(saved.has(id))saved.delete(id);else saved.add(id);persist();renderList();
+  });
+  syncControls();renderList();
+}
+
+/* ---------- rotas ---------- */
+var VIEWS=['inicio','oportunidades','estonia-brasil','sobre','votar'];
+function route(){
+  var h=location.hash.replace('#','');if(VIEWS.indexOf(h)<0)h='inicio';
+  $$('[data-view]').forEach(function(s){s.hidden=s.getAttribute('data-view')!==h});
+  $$('[data-nav]').forEach(function(a){if(a.getAttribute('data-nav')===h)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+
+/* ---------- votação (salva neste aparelho) ---------- */
+var SITE_URL=location.href.split('#')[0];
+var myVote=null;
+try{myVote=localStorage.getItem('conecta-voto')}catch(e){}
+function nomeDe(id){for(var i=0;i<OPTS.length;i++){if(OPTS[i].id===id)return OPTS[i].nome}return null}
+function renderVotes(){
+  $('#opts').innerHTML=OPTS.map(function(o){return '<button type="button" class="opt" data-opt="'+o.id+'" aria-pressed="'+(myVote===o.id)+'"><b>'+esc(o.nome)+'</b><span>'+esc(o.desc)+'</span></button>'}).join('');
+  var n=nomeDe(myVote);
+  $('#mine').textContent=n?('Você escolheu: '+n+'.'):'Você ainda não votou.';
+}
+function vote(id){
+  myVote=id;try{localStorage.setItem('conecta-voto',id)}catch(e){}
+  renderVotes();$('#vstatus').textContent='Voto registrado neste aparelho. Você pode mudar de opção quando quiser.';
+}
+function setupVotes(){
+  renderVotes();
+  $('#opts').addEventListener('click',function(e){var b=e.target.closest('[data-opt]');if(b)vote(b.getAttribute('data-opt'))});
+}
+function setupQr(){
+  if(typeof QRCode==='undefined')return;
+  $$('[data-qr]').forEach(function(el){el.innerHTML='';new QRCode(el,{text:SITE_URL,width:200,height:200,colorDark:'#0B1B4D',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.M})});
+}
+
+/* ---------- copiar link ---------- */
+$('#copy').addEventListener('click',function(){
+  var url=SITE_URL,st=$('#copystatus');
+  function ok(){st.textContent='Link copiado.'}
+  function fail(){st.textContent='Copie o endereço pela barra do navegador.'}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(ok,fail)}else fail();
+});
+
+setupFilters();setupVotes();setupQr();route();
+})();
+</script>
+
+</body>
+</html>
